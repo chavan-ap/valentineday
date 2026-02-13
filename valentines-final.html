@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 For You, My Valentine</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap');
+
+        :root {
+            --midnight: #050714;
+            --deep-space: #0a0f2e;
+            --star-white: #ffffff;
+            --rose-glow: #ff3366;
+            --rose-soft: #ff6b8a;
+            --gold: #f5c842;
+            --cream: #fff8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--midnight);
+            color: var(--star-white);
+            font-family: 'Cormorant Garamond', serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ── CUSTOM CURSOR ─────────────────────────────── */
+        .cursor {
+            position: fixed;
+            width: 12px; height: 12px;
+            background: var(--rose-glow);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s, width 0.3s, height 0.3s;
+            mix-blend-mode: screen;
+            box-shadow: 0 0 20px var(--rose-glow), 0 0 40px var(--rose-glow);
+        }
+        .cursor-trail {
+            position: fixed;
+            width: 40px; height: 40px;
+            border: 1px solid rgba(255,51,102,0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
+            transition: left 0.12s ease-out, top 0.12s ease-out;
+        }
+
+        /* ── STAR CANVAS ───────────────────────────────── */
+        #starCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ── SECTIONS ──────────────────────────────────── */
+        .scene {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        /* ── SCENE 1: OPENING ──────────────────────────── */
+        #scene-open {
+            background: radial-gradient(ellipse at center, rgba(255,51,102,0.08) 0%, transparent 70%);
+        }
+
+        .open-content {
+            text-align: center;
+            opacity: 0;
+            animation: openReveal 3s ease-out 1s forwards;
+        }
+
+        @keyframes openReveal {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .date-line {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 200;
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            letter-spacing: 6px;
+            color: var(--gold);
+            margin-bottom: 50px;
+            text-transform: uppercase;
+        }
+
+        .big-title {
+            font-size: clamp(3.5rem, 12vw, 9rem);
+            font-weight: 300;
+            font-style: italic;
+            line-height: 0.9;
+            background: linear-gradient(135deg, #fff 0%, var(--rose-soft) 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 40px;
+        }
+
+        .subtitle {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 200;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            letter-spacing: 4px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 80px;
+        }
+
+        .scroll-cue {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.4);
+            font-family: 'Josefin Sans', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: floatCue 2s ease-in-out infinite;
+        }
+
+        .scroll-cue .line {
+            width: 1px;
+            height: 50px;
+            background: linear-gradient(to bottom, rgba(255,51,102,0.8), transparent);
+        }
+
+        @keyframes floatCue {
+            0%, 100% { transform: translateY(0); opacity: 0.5; }
+            50%       { transform: translateY(10px); opacity: 1; }
+        }
+
+        /* ── SCENE 2: MAP JOURNEY ──────────────────────── */
+        #scene-map {
+            background: radial-gradient(ellipse at 30% 50%, rgba(255,51,102,0.05) 0%, transparent 60%);
+        }
+
+        .map-container {
+            width: 100%;
+            max-width: 1000px;
+            text-align: center;
+        }
+
+        .scene-label {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 200;
+            font-size: 0.75rem;
+            letter-spacing: 5px;
+            color: var(--rose-glow);
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 0.3s forwards;
+        }
+
+        .map-title {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 300;
+            font-style: italic;
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 0.6s forwards;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        #mapCanvas {
+            width: 100%;
+            max-width: 900px;
+            height: 340px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,51,102,0.2);
+            box-shadow: 0 0 60px rgba(255,51,102,0.1);
+            opacity: 0;
+            animation: fadeUp 1.2s ease-out 0.9s forwards;
+        }
+
+        .distance-note {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 200;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 1.8s forwards;
+        }
+
+        .distance-note span {
+            color: var(--rose-soft);
+        }
+
+        /* ── SCENE 3: LOVE LETTER ──────────────────────── */
+        #scene-letter {
+            background: radial-gradient(ellipse at 70% 50%, rgba(245,200,66,0.04) 0%, transparent 60%);
+        }
+
+        .letter-wrapper {
+            max-width: 720px;
+            width: 100%;
+        }
+
+        .letter-paper {
+            background: rgba(255,248,240,0.04);
+            border: 1px solid rgba(255,248,240,0.1);
+            border-radius: 4px;
+            padding: 70px 60px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .letter-paper::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50px;
+            width: 1px;
+            height: 100%;
+            background: rgba(255,51,102,0.1);
+        }
+
+        .letter-date {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 200;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            color: var(--gold);
+            text-align: right;
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease-out 0.2s forwards;
+        }
+
+        .letter-greeting {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-style: italic;
+            font-weight: 300;
+            color: var(--rose-soft);
+            margin-bottom: 35px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease-out 0.5s forwards;
+        }
+
+        .letter-body {
+            font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+            font-weight: 300;
+            line-height: 2;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 30px;
+            opacity: 0;
+        }
+
+        .letter-body.line1 { animation: fadeUp 0.8s ease-out 0.9s forwards; }
+        .letter-body.line2 { animation: fadeUp 0.8s ease-out 1.4s forwards; }
+        .letter-body.line3 { animation: fadeUp 0.8s ease-out 1.9s forwards; }
+        .letter-body.line4 { animation: fadeUp 0.8s ease-out 2.4s forwards; }
+
+        .letter-sign {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-style: italic;
+            color: var(--gold);
+            text-align: right;
+            margin-top: 50px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease-out 3s forwards;
+        }
+
+        .letter-ps {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: rgba(255,255,255,0.35);
+            text-align: right;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease-out 3.4s forwards;
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 200;
+            letter-spacing: 1px;
+        }
+
+        /* ── SCENE 4: PHOTO ────────────────────────────── */
+        #scene-photo {
+            background: radial-gradient(ellipse at center, rgba(255,51,102,0.1) 0%, transparent 60%);
+        }
+
+        .photo-wrapper {
+            max-width: 850px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .photo-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-style: italic;
+            font-weight: 300;
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 0.3s forwards;
+        }
+
+        .photo-frame {
+            position: relative;
+            display: inline-block;
+            opacity: 0;
+            animation: photoReveal 1.5s ease-out 0.8s forwards;
+        }
+
+        @keyframes photoReveal {
+            from { opacity: 0; transform: scale(0.9) rotate(-2deg); }
+            to   { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        .photo-frame img {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6),
+                        0 0 0 1px rgba(255,255,255,0.05),
+                        0 0 80px rgba(255,51,102,0.15);
+        }
+
+        .photo-caption {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 200;
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 1.8s forwards;
+        }
+
+        /* ── SCENE 5: FINALE ───────────────────────────── */
+        #scene-finale {
+            background: radial-gradient(ellipse at center, rgba(255,51,102,0.15) 0%, transparent 70%);
+            text-align: center;
+        }
+
+        .finale-content {
+            max-width: 800px;
+        }
+
+        .finale-small {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 200;
+            font-size: 0.75rem;
+            letter-spacing: 6px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 0.3s forwards;
+        }
+
+        .finale-question {
+            font-size: clamp(2.5rem, 8vw, 5.5rem);
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1.1;
+            margin-bottom: 70px;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 0.7s forwards;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 1.2s forwards;
+        }
+
+        .btn-yes {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 300;
+            font-size: 1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            padding: 22px 60px;
+            background: linear-gradient(135deg, var(--rose-glow), #ff6b8a);
+            border: none;
+            border-radius: 2px;
+            color: white;
+            cursor: none;
+            transition: all 0.4s;
+            box-shadow: 0 0 40px rgba(255,51,102,0.3);
+        }
+
+        .btn-yes:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(255,51,102,0.5);
+        }
+
+        .btn-no {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 200;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 22px 50px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 2px;
+            color: rgba(255,255,255,0.4);
+            cursor: none;
+            transition: all 0.3s;
+            position: absolute;
+        }
+
+        /* ── SCENE 6: CELEBRATION ──────────────────────── */
+        #scene-celebration {
+            display: none;
+            background: radial-gradient(ellipse at center, rgba(255,51,102,0.2) 0%, var(--midnight) 70%);
+            text-align: center;
+        }
+
+        #scene-celebration.active {
+            display: flex;
+            animation: celebFade 1.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes celebFade {
+            to { opacity: 1; }
+        }
+
+        .celeb-content {
+            max-width: 800px;
+        }
+
+        .celeb-emoji {
+            font-size: 5rem;
+            display: block;
+            margin-bottom: 40px;
+            animation: popIn 1s cubic-bezier(0.68,-0.55,0.265,1.55) 0.5s backwards;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0) rotate(-360deg); opacity: 0; }
+            to   { transform: scale(1) rotate(0); opacity: 1; }
+        }
+
+        .celeb-title {
+            font-size: clamp(3rem, 9vw, 6rem);
+            font-weight: 300;
+            font-style: italic;
+            background: linear-gradient(135deg, #fff, var(--rose-soft), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 50px;
+            animation: fadeUp 1s ease-out 0.8s backwards;
+        }
+
+        .celeb-photo {
+            width: 100%;
+            max-width: 750px;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5), 0 0 100px rgba(255,51,102,0.2);
+            margin: 40px auto;
+            animation: fadeUp 1s ease-out 1.1s backwards;
+        }
+
+        .celeb-message {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1.9;
+            color: rgba(255,255,255,0.8);
+            max-width: 650px;
+            margin: 0 auto 30px;
+            animation: fadeUp 1s ease-out 1.4s backwards;
+        }
+
+        .celeb-sign {
+            font-size: 2rem;
+            font-style: italic;
+            color: var(--gold);
+            animation: fadeUp 1s ease-out 1.8s backwards;
+        }
+
+        /* ── CANVAS FIREWORKS ──────────────────────────── */
+        #fireworkCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            display: none;
+        }
+
+        /* ── HEARTBEAT DIVIDER ─────────────────────────── */
+        .divider {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 0 20px;
+            opacity: 0.3;
+        }
+
+        .divider-line {
+            flex: 1;
+            max-width: 200px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255,51,102,0.5), transparent);
+        }
+
+        .divider-icon {
+            color: var(--rose-glow);
+            font-size: 1.2rem;
+            animation: heartPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartPulse {
+            0%, 100% { transform: scale(1); }
+            50%       { transform: scale(1.3); }
+        }
+
+        /* ── PETALS ────────────────────────────────────── */
+        .petal {
+            position: fixed;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 6;
+            animation: petalDrift linear forwards;
+            opacity: 0.8;
+        }
+
+        @keyframes petalDrift {
+            0%   { transform: translateY(-50px) rotate(0deg) translateX(0); opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(720deg) translateX(80px); opacity: 0; }
+        }
+
+        /* ── VIDEO PLAYER ──────────────────────────────── */
+        .video-frame {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 700px;
+            opacity: 0;
+            animation: photoReveal 1.5s ease-out 0.8s forwards;
+        }
+
+        .video-frame video {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6),
+                        0 0 0 1px rgba(255,255,255,0.05),
+                        0 0 80px rgba(255,51,102,0.15);
+        }
+
+        /* Subtle glow border that pulses */
+        .video-frame::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,51,102,0.4);
+            animation: videoGlow 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes videoGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,51,102,0.2); border-color: rgba(255,51,102,0.3); }
+            50%       { box-shadow: 0 0 50px rgba(255,51,102,0.5); border-color: rgba(255,51,102,0.7); }
+        }
+
+        .celeb-video {
+            width: 100%;
+            max-width: 750px;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5),
+                        0 0 100px rgba(255,51,102,0.2);
+            margin: 40px auto;
+            display: block;
+            animation: fadeUp 1s ease-out 1.1s backwards;
+        }
+
+        /* Muted indicator shown briefly then fades */
+        .unmute-hint {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 200;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            margin-top: 15px;
+            animation: hintFade 4s ease-out 2s forwards;
+        }
+
+        @keyframes hintFade {
+            0%   { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* ── RESPONSIVE ────────────────────────────────── */
+        @media (max-width: 768px) {
+            .letter-paper { padding: 50px 35px; }
+            #mapCanvas { height: 220px; }
+            .video-frame { max-width: 100%; }
+            .celeb-video { max-width: 100%; }
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-trail" id="cursorTrail"></div>
+
+    <!-- Star background -->
+    <canvas id="starCanvas"></canvas>
+
+    <!-- Fireworks canvas -->
+    <canvas id="fireworkCanvas"></canvas>
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 1 · OPENING
+    ══════════════════════════════════════════════════ -->
+    <section class="scene" id="scene-open">
+        <div class="open-content">
+            <div class="date-line">February 14, 2026 · A letter from Munich to Alabama</div>
+            <h1 class="big-title">My<br>Valentine</h1>
+            <p class="subtitle">Across the distance · Across the miles · Forever yours</p>
+            <div class="scroll-cue">
+                <div class="line"></div>
+                <span>Begin</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 2 · MAP JOURNEY
+    ══════════════════════════════════════════════════ -->
+    <section class="scene" id="scene-map">
+        <div class="map-container">
+            <div class="scene-label">Our Distance, Our Story</div>
+            <h2 class="map-title">8,855 kilometers between us.<br><em>Zero distance in our hearts.</em></h2>
+            <canvas id="mapCanvas"></canvas>
+            <p class="distance-note">
+                From <span>Munich, Germany 🇩🇪</span> to <span>Tuskegee, Alabama 🇺🇸</span> —
+                every mile is a love letter waiting to be read.
+            </p>
+        </div>
+    </section>
+
+    <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-icon">♡</div>
+        <div class="divider-line"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 3 · LOVE LETTER
+    ══════════════════════════════════════════════════ -->
+    <section class="scene" id="scene-letter">
+        <div class="letter-wrapper">
+            <div class="letter-paper">
+                <div class="letter-date">February 14, 2026 · Munich, Germany</div>
+                <div class="letter-greeting">My dearest love,</div>
+                <p class="letter-body line1">
+                    Today, on this side of the world, the winter sky is quiet and the city hums softly 
+                    beneath the stars. And yet all I can think about is you — thousands of miles away, 
+                    in a little city called Tuskegee, carrying pieces of my heart with you wherever you go.
+                </p>
+                <p class="letter-body line2">
+                    Distance has a strange way of making love sharper. Every video call feels like stolen 
+                    magic. Every "good morning" across time zones feels like a small miracle. You have 
+                    taught me that love doesn't need proximity — it only needs intention, and I intend 
+                    to love you with everything I have, every single day.
+                </p>
+                <p class="letter-body line3">
+                    I am so proud of the life you are building there — the courage it takes, the strength 
+                    you carry. You inspire me more than you know. Our story is not a conventional one, 
+                    but it is ours, and I wouldn't trade it for anything.
+                </p>
+                <p class="letter-body line4">
+                    So on this Valentine's Day — across oceans, across time, across every mile that 
+                    separates us — know that my love for you is not diminished by distance. 
+                    It is amplified by it.
+                </p>
+                <div class="letter-sign">Forever and always, yours 💕</div>
+                <div class="letter-ps">P.S. — I'm sending you flowers today. Look out for the doorbell. 🌹</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-icon">♡</div>
+        <div class="divider-line"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 4 · VIDEO
+    ══════════════════════════════════════════════════ -->
+    <section class="scene" id="scene-photo">
+        <div class="photo-wrapper">
+            <h2 class="photo-title">Us, against the world.</h2>
+            <div class="video-frame" id="videoFrame">
+                <video
+                    id="mainVideo"
+                    src="valentinesday.mp4"
+                    playsinline
+                    loop
+                    preload="auto"
+                    style="cursor: pointer;"
+                    title="Click to pause / resume"
+                ></video>
+                <!-- ↑ CHANGE VIDEO FILENAME HERE ↑ -->
+            </div>
+            <p class="photo-caption">Two countries · One heart · A lifetime ahead</p>
+        </div>
+    </section>
+
+    <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-icon">♡</div>
+        <div class="divider-line"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 5 · THE QUESTION
+    ══════════════════════════════════════════════════ -->
+    <section class="scene" id="scene-finale">
+        <div class="finale-content">
+            <div class="finale-small">The only question that matters</div>
+            <h2 class="finale-question">
+                Will you be my Valentine<br>today, and every day?
+            </h2>
+            <div class="btn-group">
+                <button class="btn-yes" id="yesBtn">Always & Forever 💕</button>
+                <button class="btn-no" id="noBtn">Not sure...</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         SCENE 6 · CELEBRATION
+    ══════════════════════════════════════════════════ -->
+    <section class="scene" id="scene-celebration">
+        <div class="celeb-content">
+            <span class="celeb-emoji">💕</span>
+            <h2 class="celeb-title">She Said Yes,<br>Again.</h2>
+            <video
+                id="celebVideo"
+                src="valentinesday.mp4"
+                class="celeb-video"
+                playsinline
+                loop
+                preload="auto"
+                style="cursor: pointer;"
+                title="Click to pause / resume"
+            ></video>
+            <!-- ↑ CHANGE VIDEO FILENAME HERE ↑ -->
+            <p class="celeb-message">
+                From Germany to Alabama, across every time zone and every mile —
+                this love story is the most beautiful one I've ever known.
+                Thank you for being mine. Happy Valentine's Day, my love. 🌹
+            </p>
+            <div class="celeb-sign">— Yours, always 💕</div>
+        </div>
+    </section>
+
+    <script>
+    // ══════════════════════════════════════════════════════
+    // CURSOR
+    // ══════════════════════════════════════════════════════
+    const cursor = document.getElementById('cursor');
+    const cursorTrail = document.getElementById('cursorTrail');
+
+    document.addEventListener('mousemove', e => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top  = e.clientY + 'px';
+        setTimeout(() => {
+            cursorTrail.style.left = e.clientX + 'px';
+            cursorTrail.style.top  = e.clientY + 'px';
+        }, 80);
+    });
+
+    // ══════════════════════════════════════════════════════
+    // STAR FIELD
+    // ══════════════════════════════════════════════════════
+    const starCanvas = document.getElementById('starCanvas');
+    const sCtx = starCanvas.getContext('2d');
+
+    function resizeStar() {
+        starCanvas.width  = window.innerWidth;
+        starCanvas.height = window.innerHeight;
+    }
+    resizeStar();
+    window.addEventListener('resize', resizeStar);
+
+    const stars = Array.from({ length: 200 }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: Math.random() * 1.5 + 0.3,
+        alpha: Math.random(),
+        speed: Math.random() * 0.008 + 0.002,
+        pulse: Math.random() * Math.PI * 2
+    }));
+
+    function drawStars() {
+        sCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+        stars.forEach(s => {
+            s.pulse += s.speed;
+            const a = 0.3 + 0.7 * Math.abs(Math.sin(s.pulse));
+            sCtx.beginPath();
+            sCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            sCtx.fillStyle = `rgba(255,255,255,${a})`;
+            sCtx.fill();
+        });
+        requestAnimationFrame(drawStars);
+    }
+    drawStars();
+
+    // ══════════════════════════════════════════════════════
+    // MAP CANVAS — animated arc from Germany to Alabama
+    // ══════════════════════════════════════════════════════
+    const mapCanvas = document.getElementById('mapCanvas');
+    const mCtx = mapCanvas.getContext('2d');
+
+    function resizeMap() {
+        mapCanvas.width  = mapCanvas.offsetWidth;
+        mapCanvas.height = mapCanvas.offsetHeight;
+    }
+    resizeMap();
+    window.addEventListener('resize', () => { resizeMap(); drawMap(1); });
+
+    // Approximate screen positions as fractions of canvas
+    const MUNICH  = { fx: 0.55, fy: 0.28, label: 'Munich 🇩🇪', sublabel: 'Where I am' };
+    const ALABAMA = { fx: 0.18, fy: 0.38, label: 'Tuskegee 🇺🇸', sublabel: 'Where you are' };
+
+    function geoPoint(p) {
+        return {
+            x: p.fx * mapCanvas.width,
+            y: p.fy * mapCanvas.height
+        };
+    }
+
+    function drawMap(progress) {
+        const W = mapCanvas.width, H = mapCanvas.height;
+        mCtx.clearRect(0, 0, W, H);
+
+        // Dark ocean background
+        mCtx.fillStyle = '#070d1f';
+        mCtx.fillRect(0, 0, W, H);
+
+        // Subtle grid lines
+        mCtx.strokeStyle = 'rgba(255,255,255,0.03)';
+        mCtx.lineWidth = 1;
+        for (let x = 0; x < W; x += 60) {
+            mCtx.beginPath(); mCtx.moveTo(x, 0); mCtx.lineTo(x, H); mCtx.stroke();
+        }
+        for (let y = 0; y < H; y += 60) {
+            mCtx.beginPath(); mCtx.moveTo(0, y); mCtx.lineTo(W, y); mCtx.stroke();
+        }
+
+        // Landmass silhouettes (simplified shapes)
+        mCtx.fillStyle = 'rgba(255,255,255,0.04)';
+
+        // North America rough outline
+        mCtx.beginPath();
+        mCtx.ellipse(W * 0.17, H * 0.35, W * 0.13, H * 0.28, 0, 0, Math.PI * 2);
+        mCtx.fill();
+
+        // Europe rough outline
+        mCtx.beginPath();
+        mCtx.ellipse(W * 0.56, H * 0.27, W * 0.08, H * 0.15, 0, 0, Math.PI * 2);
+        mCtx.fill();
+
+        // Atlantic ocean label
+        mCtx.fillStyle = 'rgba(255,255,255,0.06)';
+        mCtx.font = `${W * 0.025}px 'Josefin Sans', sans-serif`;
+        mCtx.textAlign = 'center';
+        mCtx.fillText('ATLANTIC OCEAN', W * 0.38, H * 0.5);
+
+        const m = geoPoint(MUNICH);
+        const a = geoPoint(ALABAMA);
+
+        // Animated arc path
+        const cp = {
+            x: (m.x + a.x) / 2,
+            y: Math.min(m.y, a.y) - H * 0.45
+        };
+
+        // Glow effect on arc
+        mCtx.save();
+        mCtx.strokeStyle = 'rgba(255,51,102,0.15)';
+        mCtx.lineWidth = 12;
+        mCtx.shadowBlur = 30;
+        mCtx.shadowColor = 'rgba(255,51,102,0.5)';
+        drawArcProgress(m, a, cp, progress);
+        mCtx.stroke();
+        mCtx.restore();
+
+        // Main arc line
+        mCtx.strokeStyle = 'rgba(255,51,102,0.9)';
+        mCtx.lineWidth = 2;
+        mCtx.setLineDash([6, 4]);
+        mCtx.shadowBlur = 10;
+        mCtx.shadowColor = 'rgba(255,51,102,0.8)';
+        drawArcProgress(m, a, cp, progress);
+        mCtx.stroke();
+        mCtx.setLineDash([]);
+        mCtx.shadowBlur = 0;
+
+        // Animate a dot along the path
+        if (progress < 1) {
+            const pt = getQuadPoint(m, cp, a, progress);
+            mCtx.beginPath();
+            mCtx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+            mCtx.fillStyle = '#fff';
+            mCtx.shadowBlur = 15;
+            mCtx.shadowColor = '#fff';
+            mCtx.fill();
+            mCtx.shadowBlur = 0;
+        }
+
+        // Draw city dots & labels
+        [{ p: m, data: MUNICH }, { p: a, data: ALABAMA }].forEach(({ p, data }) => {
+            // Outer ring
+            mCtx.beginPath();
+            mCtx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+            mCtx.strokeStyle = 'rgba(255,51,102,0.4)';
+            mCtx.lineWidth = 1;
+            mCtx.stroke();
+
+            // Inner dot
+            mCtx.beginPath();
+            mCtx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+            mCtx.fillStyle = 'rgba(255,51,102,0.9)';
+            mCtx.shadowBlur = 15;
+            mCtx.shadowColor = 'rgba(255,51,102,0.8)';
+            mCtx.fill();
+            mCtx.shadowBlur = 0;
+
+            // Label
+            const isRight = p.x > W / 2;
+            mCtx.font = `bold ${W * 0.018}px 'Josefin Sans', sans-serif`;
+            mCtx.fillStyle = 'rgba(255,255,255,0.9)';
+            mCtx.textAlign = isRight ? 'right' : 'left';
+            mCtx.fillText(data.label, p.x + (isRight ? -18 : 18), p.y - 10);
+
+            mCtx.font = `${W * 0.014}px 'Josefin Sans', sans-serif`;
+            mCtx.fillStyle = 'rgba(255,51,102,0.7)';
+            mCtx.fillText(data.sublabel, p.x + (isRight ? -18 : 18), p.y + 8);
+        });
+
+        // Heart at midpoint when complete
+        if (progress >= 1) {
+            const mid = getQuadPoint(m, cp, a, 0.5);
+            mCtx.font = `${H * 0.12}px serif`;
+            mCtx.textAlign = 'center';
+            mCtx.globalAlpha = 0.9;
+            mCtx.shadowBlur = 20;
+            mCtx.shadowColor = 'rgba(255,51,102,0.8)';
+            mCtx.fillText('❤️', mid.x, mid.y + H * 0.06);
+            mCtx.shadowBlur = 0;
+            mCtx.globalAlpha = 1;
+        }
+    }
+
+    function drawArcProgress(m, a, cp, t) {
+        mCtx.beginPath();
+        // Approximate arc by sampling points up to t
+        const steps = 60;
+        for (let i = 0; i <= steps * t; i++) {
+            const ti = i / steps;
+            const pt = getQuadPoint(m, cp, a, ti);
+            if (i === 0) mCtx.moveTo(pt.x, pt.y);
+            else         mCtx.lineTo(pt.x, pt.y);
+        }
+    }
+
+    function getQuadPoint(p0, cp, p1, t) {
+        return {
+            x: (1-t)*(1-t)*p0.x + 2*(1-t)*t*cp.x + t*t*p1.x,
+            y: (1-t)*(1-t)*p0.y + 2*(1-t)*t*cp.y + t*t*p1.y
+        };
+    }
+
+    // Animate map
+    let mapProgress = 0;
+    let mapStarted = false;
+
+    const mapObserver = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && !mapStarted) {
+            mapStarted = true;
+            animateMap();
+        }
+    }, { threshold: 0.3 });
+    mapObserver.observe(document.getElementById('scene-map'));
+
+    function animateMap() {
+        if (mapProgress <= 1) {
+            mapProgress += 0.008;
+            drawMap(Math.min(mapProgress, 1));
+            requestAnimationFrame(animateMap);
+        }
+    }
+    drawMap(0);
+
+    // ══════════════════════════════════════════════════════
+    // NO BUTTON ESCAPE
+    // ══════════════════════════════════════════════════════
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+
+    function escapeNo() {
+        const maxX = window.innerWidth  - noBtn.offsetWidth  - 40;
+        const maxY = window.innerHeight - noBtn.offsetHeight - 40;
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = Math.max(20, Math.random() * maxX) + 'px';
+        noBtn.style.top  = Math.max(20, Math.random() * maxY) + 'px';
+        noBtn.style.zIndex = '9999';
+    }
+
+    noBtn.addEventListener('mouseenter', escapeNo);
+    noBtn.addEventListener('touchstart', e => { e.preventDefault(); escapeNo(); });
+    noBtn.addEventListener('click',      e => { e.preventDefault(); escapeNo(); });
+
+    // ══════════════════════════════════════════════════════
+    // VIDEO AUTOPLAY — plays with sound when scrolled into view
+    // ══════════════════════════════════════════════════════
+    const mainVideo = document.getElementById('mainVideo');
+
+    // Autoplay with sound when Scene 4 comes into view
+    const videoObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                mainVideo.muted = false;
+                mainVideo.play().catch(() => {
+                    // If browser blocks sound, play muted first then unmute
+                    mainVideo.muted = true;
+                    mainVideo.play().then(() => {
+                        mainVideo.muted = false;
+                    });
+                });
+            } else {
+                mainVideo.pause();
+            }
+        });
+    }, { threshold: 0.4 });
+
+    videoObserver.observe(document.getElementById('scene-photo'));
+
+    // Click to pause / resume
+    mainVideo.addEventListener('click', () => {
+        mainVideo.paused ? mainVideo.play() : mainVideo.pause();
+    });
+
+    
+    yesBtn.addEventListener('click', () => {
+        // Pause main video
+        mainVideo.pause();
+
+        // Hide finale scene
+        document.getElementById('scene-finale').classList.add('hidden');
+
+        // Show celebration
+        const cel = document.getElementById('scene-celebration');
+        cel.classList.add('active');
+
+        window.scrollTo({ top: cel.offsetTop, behavior: 'smooth' });
+
+        // Play celebration video after scroll settles
+        setTimeout(() => {
+            const celebVideo = document.getElementById('celebVideo');
+            celebVideo.muted = false;
+            celebVideo.play().catch(() => {
+                celebVideo.muted = true;
+                celebVideo.play().then(() => { celebVideo.muted = false; });
+            });
+            // Click to pause / resume
+            celebVideo.addEventListener('click', () => {
+                celebVideo.paused ? celebVideo.play() : celebVideo.pause();
+            });
+        }, 1000);
+
+        // Start fireworks
+        startFireworks();
+        dropPetals();
+        sendEmail();
+    });
+
+    // ══════════════════════════════════════════════════════
+    // FIREWORKS
+    // ══════════════════════════════════════════════════════
+    const fwCanvas = document.getElementById('fireworkCanvas');
+    const fCtx = fwCanvas.getContext('2d');
+
+    function resizeFW() {
+        fwCanvas.width  = window.innerWidth;
+        fwCanvas.height = window.innerHeight;
+    }
+    resizeFW();
+    window.addEventListener('resize', resizeFW);
+
+    let particles = [];
+    let fwRunning = false;
+
+    function startFireworks() {
+        fwCanvas.style.display = 'block';
+        fwRunning = true;
+        launchBurst();
+        setInterval(launchBurst, 700);
+        setTimeout(() => { fwRunning = false; }, 8000);
+        animateFW();
+    }
+
+    function launchBurst() {
+        if (!fwRunning) return;
+        const x = 0.2 * fwCanvas.width + Math.random() * 0.6 * fwCanvas.width;
+        const y = 0.1 * fwCanvas.height + Math.random() * 0.5 * fwCanvas.height;
+        const colors = ['#ff3366','#ff6b8a','#f5c842','#ffffff','#ff1493','#ffd700'];
+        const color  = colors[Math.floor(Math.random() * colors.length)];
+
+        for (let i = 0; i < 50; i++) {
+            const angle = (Math.PI * 2 * i) / 50;
+            const speed = 2 + Math.random() * 4;
+            particles.push({
+                x, y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                alpha: 1,
+                color,
+                size: 2 + Math.random() * 2,
+                decay: 0.015 + Math.random() * 0.01
+            });
+        }
+    }
+
+    function animateFW() {
+        fCtx.fillStyle = 'rgba(0,0,0,0.15)';
+        fCtx.fillRect(0, 0, fwCanvas.width, fwCanvas.height);
+
+        particles = particles.filter(p => p.alpha > 0.01);
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.07; // gravity
+            p.vx *= 0.98;
+            p.alpha -= p.decay;
+
+            fCtx.beginPath();
+            fCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            fCtx.fillStyle = p.color;
+            fCtx.globalAlpha = p.alpha;
+            fCtx.fill();
+            fCtx.globalAlpha = 1;
+        });
+
+        if (particles.length > 0 || fwRunning) requestAnimationFrame(animateFW);
+        else {
+            setTimeout(() => { fwCanvas.style.display = 'none'; }, 1000);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════
+    // PETAL RAIN
+    // ══════════════════════════════════════════════════════
+    function dropPetals() {
+        const emojis = ['🌹','🌸','💕','❤️','💖','✨','💫'];
+        for (let i = 0; i < 50; i++) {
+            setTimeout(() => {
+                const p = document.createElement('div');
+                p.className = 'petal';
+                p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.top = '-50px';
+                p.style.fontSize = (Math.random() * 20 + 16) + 'px';
+                p.style.animationDuration = (Math.random() * 4 + 5) + 's';
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 9000);
+            }, i * 120);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════
+    // EMAIL
+    // ══════════════════════════════════════════════════════
+    async function sendEmail() {
+        try {
+            await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    access_key: '1cb04b7e-b18d-4f18-8249-40c248681b7d',
+                    subject: '💕 She Said Yes - Valentine\'s Day 2026!',
+                    from_name: 'Valentine\'s Day',
+                    message: `💕 She opened your Valentine's Day love letter!\n\nShe said YES!\n\nFrom Munich with love 🌹\nTime: ${new Date().toLocaleString()}`,
+                    to: 'ajaychavan_in@outlook.com'
+                })
+            });
+        } catch(e) { console.log('Email error', e); }
+    }
+    </script>
+</body>
+</html>
