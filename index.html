@@ -560,11 +560,10 @@
         /* ── VIDEO PLAYER ──────────────────────────────── */
         .video-frame {
             position: relative;
-            display: inline-block;
+            display: block;
             width: 100%;
             max-width: 700px;
-            opacity: 0;
-            animation: photoReveal 1.5s ease-out 0.8s forwards;
+            margin: 0 auto;
         }
 
         .video-frame video {
@@ -572,6 +571,7 @@
             height: auto;
             border-radius: 4px;
             display: block;
+            background: #000;
             box-shadow: 0 40px 100px rgba(0,0,0,0.6),
                         0 0 0 1px rgba(255,255,255,0.05),
                         0 0 80px rgba(255,51,102,0.15);
@@ -598,28 +598,11 @@
             max-width: 750px;
             height: auto;
             border-radius: 4px;
+            display: block;
+            background: #000;
             box-shadow: 0 40px 100px rgba(0,0,0,0.5),
                         0 0 100px rgba(255,51,102,0.2);
             margin: 40px auto;
-            display: block;
-            animation: fadeUp 1s ease-out 1.1s backwards;
-        }
-
-        /* Muted indicator shown briefly then fades */
-        .unmute-hint {
-            font-family: 'Josefin Sans', sans-serif;
-            font-weight: 200;
-            font-size: 0.75rem;
-            letter-spacing: 3px;
-            color: rgba(255,255,255,0.4);
-            text-transform: uppercase;
-            margin-top: 15px;
-            animation: hintFade 4s ease-out 2s forwards;
-        }
-
-        @keyframes hintFade {
-            0%   { opacity: 1; }
-            100% { opacity: 0; }
         }
 
         /* ── RESPONSIVE ────────────────────────────────── */
@@ -732,11 +715,13 @@
                 <video
                     id="mainVideo"
                     src="valentinesday.mp4"
+                    muted
+                    autoplay
                     playsinline
                     loop
+                    controls
                     preload="auto"
                     style="cursor: pointer;"
-                    title="Click to pause / resume"
                 ></video>
                 <!-- ↑ CHANGE VIDEO FILENAME HERE ↑ -->
             </div>
@@ -777,11 +762,13 @@
                 id="celebVideo"
                 src="valentinesday.mp4"
                 class="celeb-video"
+                muted
+                autoplay
                 playsinline
                 loop
+                controls
                 preload="auto"
                 style="cursor: pointer;"
-                title="Click to pause / resume"
             ></video>
             <!-- ↑ CHANGE VIDEO FILENAME HERE ↑ -->
             <p class="celeb-message">
@@ -1052,36 +1039,60 @@
     noBtn.addEventListener('click',      e => { e.preventDefault(); escapeNo(); });
 
     // ══════════════════════════════════════════════════════
-    // VIDEO AUTOPLAY — plays with sound when scrolled into view
+    // VIDEO — simple reliable autoplay with controls fallback
     // ══════════════════════════════════════════════════════
     const mainVideo = document.getElementById('mainVideo');
 
-    // Autoplay with sound when Scene 4 comes into view
-    const videoObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                mainVideo.muted = false;
-                mainVideo.play().catch(() => {
-                    // If browser blocks sound, play muted first then unmute
-                    mainVideo.muted = true;
-                    mainVideo.play().then(() => {
-                        mainVideo.muted = false;
-                    });
-                });
-            } else {
-                mainVideo.pause();
-            }
+    // Try autoplay with sound, fall back to muted autoplay, 
+    // then show controls so she can tap to play
+    function tryPlayVideo(video) {
+        if (!video) return;
+        video.muted = false;
+        video.play().catch(() => {
+            // Browser blocked sound — try muted autoplay
+            video.muted = true;
+            video.play().catch(() => {
+                // Browser blocked all autoplay — show controls so she can tap
+                video.controls = true;
+            });
         });
-    }, { threshold: 0.4 });
+    }
 
-    videoObserver.observe(document.getElementById('scene-photo'));
-
-    // Click to pause / resume
-    mainVideo.addEventListener('click', () => {
-        mainVideo.paused ? mainVideo.play() : mainVideo.pause();
+    // Play as soon as page loads (works on most browsers)
+    window.addEventListener('load', () => {
+        tryPlayVideo(mainVideo);
     });
 
-    
+    // Also try on first user interaction (for strict browsers like Safari)
+    let videoStarted = false;
+    document.addEventListener('click', () => {
+        if (!videoStarted) {
+            videoStarted = true;
+            mainVideo.muted = false;
+            mainVideo.play().catch(() => {});
+        }
+    }, { once: true });
+
+    document.addEventListener('touchstart', () => {
+        if (!videoStarted) {
+            videoStarted = true;
+            mainVideo.muted = false;
+            mainVideo.play().catch(() => {});
+        }
+    }, { once: true });
+
+    // Click/tap on video to pause or resume
+    mainVideo.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (mainVideo.paused) {
+            mainVideo.muted = false;
+            mainVideo.play();
+        } else {
+            mainVideo.pause();
+        }
+    });
+
+
     yesBtn.addEventListener('click', () => {
         // Pause main video
         mainVideo.pause();
@@ -1093,21 +1104,25 @@
         const cel = document.getElementById('scene-celebration');
         cel.classList.add('active');
 
-        window.scrollTo({ top: cel.offsetTop, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // Play celebration video after scroll settles
+        // Play celebration video after short delay
         setTimeout(() => {
             const celebVideo = document.getElementById('celebVideo');
-            celebVideo.muted = false;
-            celebVideo.play().catch(() => {
-                celebVideo.muted = true;
-                celebVideo.play().then(() => { celebVideo.muted = false; });
-            });
-            // Click to pause / resume
-            celebVideo.addEventListener('click', () => {
-                celebVideo.paused ? celebVideo.play() : celebVideo.pause();
-            });
-        }, 1000);
+            if (celebVideo) {
+                celebVideo.muted = false;
+                celebVideo.play().catch(() => {
+                    celebVideo.muted = true;
+                    celebVideo.play().catch(() => {
+                        celebVideo.controls = true;
+                    });
+                });
+                celebVideo.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    celebVideo.paused ? celebVideo.play() : celebVideo.pause();
+                });
+            }
+        }, 800);
 
         // Start fireworks
         startFireworks();
